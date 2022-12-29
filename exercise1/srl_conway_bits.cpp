@@ -7,7 +7,6 @@
 #include <iomanip>
 #include <chrono>
 #include <cstring>
-#include <omp.h>
 
 #define INIT 1
 #define RUN  2
@@ -85,9 +84,6 @@ void update_grid(const int mode, const int size, std::vector<int>& grid) {
       }
     case 1:
       std::vector<int> old_grid = grid; // can be parallelized (?)
-      #pragma omp parallel
-      {
-      #pragma omp for collapse(2)
       for (int i = 0; i < size; i++) { // for collapse
         for (int j = 0; j < size; j++) {
           static_update_cell(grid, old_grid, i, j, size);
@@ -95,7 +91,6 @@ void update_grid(const int mode, const int size, std::vector<int>& grid) {
       }
     }
   }
-}
 
 // Initialize a matrix of zeros that contains at its center a smaller matrix read from file
 std::vector<int> loadMatrix(const std::string& filename, const int size) {
@@ -134,24 +129,6 @@ std::string num_conv(const int number) {
   return str;
 }
 
-void createSnapshot(const std::vector<int>& arr, const int size, const int step) {
-  // Open a file called "snapshot_s" in write mode
-  std::string num = num_conv(step);
-  std::ofstream snapshot("snapshot_" + num + ".pbm", std::ios::binary);
-
-  // Write the P4 binary PBM file header
-  snapshot << "P4\n" << size << ' ' << size << "\n";
-
-  // Iterate through the array and write each element to the file as a single bit
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      snapshot << (char)(arr[i*size + j] & 1);
-    }
-  }
-  snapshot.close();
-}
-
-
 char createCharacterFromBits(const std::array<int, 8>& bits) {
     char result = 0;
     for (int i = 0; i < 8; i++) {
@@ -159,54 +136,66 @@ char createCharacterFromBits(const std::array<int, 8>& bits) {
     } // 00000001 -> 00000010 | 00000000 00000000 00000000 00000001 = 00000011
     return result;
 }
-/*
-void createSnapshot(std::vector<int>& arr, int size,int step) {
+
+void createSnapshot(const std::vector<int>& arr, const int size, const int step) {
   int resto = size%8;
   int quot = size/8;
 
   // Open a file called "snapshot_s" in write mode
   std::string num = num_conv(step);
-  std::ofstream snapshot("snapshot_" + num +".pbm", std::ios::binary);
+  std::ofstream snapshot("snapshot_" + num + ".pbm", std::ios::binary);
   // Iterate through the array and write each element to the file, separated by a space
   snapshot << "P4\n" << size << ' ' << size <<"\n";
-  int i=0;
-  while (i<size*size) {
+  int i = 0;
+  while (i < size*size) {
     int i_mod = i%size;
-    if (i_mod < quot*8){ // 1)
-    std::array<int, 8> beet={arr[i],arr[i+1],arr[i+2],arr[i+3],arr[i+4],arr[i+5],arr[i+6],arr[i+7]};
-    char c = createCharacterFromBits(beet);
-    snapshot << c;
-    i=i+8;}
-    // 2)
+    if (i_mod < quot*8) {
+      std::array<int, 8> beet = {arr[i],arr[i+1],arr[i+2],arr[i+3],arr[i+4],arr[i+5],arr[i+6],arr[i+7]};
+      char c = createCharacterFromBits(beet);
+      snapshot << c;
+      i = i + 8;
+    }
     else { std::array<int, 8> boot={0,0,0,0,0,0,0,0};
-      for(int j=0; j<resto;j++) {
-        if(j<resto) boot[j]=arr[i+j];
+      for (int j=0; j<resto;j++) {
+        if (j<resto) boot[j] = arr[i+j];
       }
       char c = createCharacterFromBits(boot);
       snapshot << c;
-      i = i+size-(i%size);
+      i = i + size-(i%size);
     }
   }
 }
-*/
-void readSnapshot(std::vector<int>& grid, const int size, const std::string namefile) {
-  // Open a file in read mode
-  std::ifstream snapshot(namefile, std::ios::binary);
 
-  // Read the P4 binary PBM file header
-  std::string line;
-  getline(snapshot, line);  // skip the "P4" magic number
-  getline(snapshot, line);  // skip the dimensions line
-
-  // Read each byte from the file and store its bits in the array
-  for (int i = 0; i < size*size; i++) {
-    char byte;
-    snapshot.read(&byte, 1);
-    grid[i] = byte & 1;
+std::vector<int> createBitsFromCharacter(char c) {
+  std::vector<int> bits;
+  for (int i = 0; i < 8; i++) {
+    bits.push_back((c >> (7 - i)) & 1);
   }
+  return bits;
+}
 
-  // Close the file
-  snapshot.close();
+void readSnapshot(std::vector<int>& arr, const int size, const std::string namefile) {
+  int k = size % 8;
+  int n = (size/8) + 1;
+  // Open a file called "snapshot_s" in read mode
+  std::ifstream snapshot(namefile);
+  std::string line;
+  getline(snapshot, line);  // skip the first line
+  getline(snapshot, line);  //skip the second line
+  int i = 0;
+  char c;
+    while (snapshot.get(c)) {
+    	if ((i+1) % n == 0 ) {
+        std::vector<int> bits = createBitsFromCharacter(c);
+        arr.insert(arr.end(), bits.begin(), bits.begin() + k);
+      }
+      else {
+        std::vector<int> bits = createBitsFromCharacter(c);
+        arr.insert(arr.end(), bits.begin(), bits.end());
+      }
+        i++;
+    }
+    snapshot.close();
 }
 
 int main(int argc, char* argv[]) {
@@ -243,19 +232,21 @@ int main(int argc, char* argv[]) {
   std::chrono::duration<double> update_elapsed, write_elapsed;
 
   if (action == 2) {
-    #pragma omp parallel
-    #pragma omp master
-    {
-      //int nthreads = omp_get_num_threads();
-      //std::cout << "nthreads: " << nthreads << std::endl;
-    }
-    // readSnapshot(grid, k, fname);
-    init_grid(grid, k);
+    std::vector<int> empty_grid;
+    readSnapshot(empty_grid, k, fname);
+    grid = empty_grid;
+    //init_grid(grid, k);
     for (int i = 1; i <= n; i++) {
       auto start = std::chrono::high_resolution_clock::now();
       update_grid(e, k, grid);
       auto end = std::chrono::high_resolution_clock::now();
       update_elapsed += end - start;
+      for (int i = 0; i < k; i++) {
+        for (int j = 0; j < k; j++) {
+          std::cout << grid[i*k + j] << ' ';
+        }
+        std::cout << '\n';
+      }
       if (i%s == 0) {
         auto start = std::chrono::high_resolution_clock::now();
         createSnapshot(grid, k, i);
@@ -276,3 +267,46 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
+
+// **OTHER VERSIONS OF SOME FUNCTIONS**
+
+/*
+void createSnapshot(const std::vector<int>& arr, const int size, const int step) {
+  // Open a file called "snapshot_s" in write mode
+  std::string num = num_conv(step);
+  std::ofstream snapshot("snapshot_" + num + ".pbm", std::ios::binary);
+
+  // Write the P4 binary PBM file header
+  snapshot << "P4\n" << size << ' ' << size << "\n";
+
+  // Iterate through the array and write each element to the file as a single bit
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      snapshot << (char)(arr[i*size + j] & 1);
+    }
+  }
+  snapshot.close();
+}
+*/
+
+/*
+void readSnapshot(std::vector<int>& grid, const int size, const std::string namefile) {
+  // Open a file in read mode
+  std::ifstream snapshot(namefile, std::ios::binary);
+
+  // Read the P4 binary PBM file header
+  std::string line;
+  getline(snapshot, line);  // skip the "P4" magic number
+  getline(snapshot, line);  // skip the dimensions line
+
+  // Read each byte from the file and store its bits in the array
+  for (int i = 0; i < size*size; i++) {
+    char byte;
+    snapshot.read(&byte, 1);
+    grid[i] = byte & 1;
+  }
+
+  // Close the file
+  snapshot.close();
+}
+*/
