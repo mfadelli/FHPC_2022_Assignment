@@ -16,7 +16,7 @@ The report can be found **here**. (da mettere il link)
 The first exercise consists in a hybrid openMP+MPI implementation of *Conway's Game of Life*.
 Regarding the mandatory instructions 
 
- - *dynamic* and *static* evolution modes were implemented;
+ - *ordered* and *static* evolution modes were implemented;
  - *openMP scalability* and *MPI strong and weak scalability* for the static evolution were assessed using ORFEO.
 
 Additionally, the writing on file was done using raw *.pbm* format with the magic number *P4*, and a profiling of the code was attempted.
