@@ -7,7 +7,7 @@ Academic Year 2022-2023
 **Disclaimer:** This project was carried out by **Linda Broglio**, **Matteo Fadelli** and **Nicola Perin**. We worked together for the entirety of the time, occasionally working *in parallel* to speed up the process.
 
 This repository contains the proposed solution for the 2022 - 2023 assignment of the course "Foundations of High Performance Computing". 
-It consists of the report of the  assignment and two directories with the material produced. In each of these directories there is a readme that contains further information to navigate the content. 
+It consists of the report of the  assignment and two directories with the material produced. In each of these directories there is a readme helping navigate the content. 
 
 The report can be found **here**. (da mettere il link)
 
