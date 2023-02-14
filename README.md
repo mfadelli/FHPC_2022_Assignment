@@ -1,4 +1,4 @@
-# FHPC_2022_Assignment
+# FHPC 2022 Assignment
 # **Repository for the 2022 - 2023 HPC assignment**
 Università degli Studi di Trieste\
 Data Science and Scientific Computing\
