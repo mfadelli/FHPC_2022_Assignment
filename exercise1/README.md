@@ -17,7 +17,7 @@ To get the script and the job going it is sufficient to type
 ## Setting the arguments
 To know what the arguments are and get a brief guide, type
    
-    $ ./Conway.x -h
+    $ srun Conway.x -h
 The arguments are the following
 
 | Argument  | Usage  | 
