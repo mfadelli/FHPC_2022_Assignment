@@ -12,7 +12,7 @@ The report can be found **here**. (da mettere il link)
 
 ## Exercise 1
 
-The first exercise consists in a hybrid openMP+MPI implementation of *Conway's Game of Life*.
+The first exercise consists in a hybrid openMP+MPI implementation of **Conway's Game of Life**.
 Regarding the mandatory instructions 
 
  - *ordered* and *static* evolution modes were implemented;
