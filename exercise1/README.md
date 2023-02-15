@@ -15,14 +15,14 @@ To get the script and the job going it is sufficient to type
     sbatch script1.sh
 
 ## Setting the arguments
-To know what are the arguments and get a brief guide, type
+To know what the arguments are and get a brief guide, type
    
     ./Conway.x -h
 The arguments are the following
 
 | Argument  | Usage  | 
 | :------------ |:---------------| 
-| -i file <br> -i random | Initializes grid loading a pattern from an ASCII .pbm file <br> Initializes the grid randomly |
+| -i file <br> -i random | Initialize grid loading a pattern from an ASCII .pbm file <br> Initialize the grid randomly |
 | -r      | Run the program  |
 | -k <number> | Set the size of the grid |
 | -e 0 <br> -e 1 | Select the ordered evolution <br> Select the static evolution |
