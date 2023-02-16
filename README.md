@@ -8,7 +8,7 @@ Academic Year 2022-2023
 This repository contains the proposed solution for the 2022 - 2023 assignment of the course "Foundations of High Performance Computing". 
 It consists of the report of the  assignment and two directories with the material produced. In each of these directories there is a readme helping navigate the content. 
 
-The report can be found **here**. (da mettere il link)
+The report can be found in the folder.
 
 ## Exercise 1
 
@@ -18,7 +18,7 @@ Regarding the mandatory instructions
  - *ordered* and *static* evolution modes were implemented;
  - *openMP scalability* and *MPI strong and weak scalability* for the static evolution were assessed using ORFEO.
 
-Additionally, the writing on file was done using raw *.pbm* format with the magic number *P4*, and a profiling of the code was attempted.
+Additionally, the writing on file was done using raw *.pbm* format with the magic number *P4*.
 More information on the structure of the code and the **instructions** to compile and run it can be found inside the readme of the exercise 1 directory.
 
 All the **results** are presented in the **report** and discussed.
