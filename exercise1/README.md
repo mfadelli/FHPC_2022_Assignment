@@ -12,7 +12,7 @@ The folder contains a Makefile to ease the compiling hence it is enough to load 
 ## How to run the code
 Example:
 
-    $ salloc -N 2 -p THIN --ntasks 2 --cpus-per-task=64 --time=1:50:0
+    $ salloc -N 3 -p EPYC --ntasks 6 --cpus-per-task=64 --time=1:50:0
     $ export OMP_NUM_THREADS=64
 and then *$ srun Conway.x* with the appropriate arguments.<br>
 **Setting the arguments:** <br>
