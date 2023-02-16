@@ -5,7 +5,7 @@
 The folder contains a Makefile to ease the compiling hence it is enough to load the modules and do a *make*
 
     $ module load architecture/AMD
-    $ module load openMPU/4.1.4/gnu/12.2.1
+    $ module load openMPI/4.1.4/gnu/12.2.1
     $ salloc -n 1 -N1 -p EPYC --time=0:10:0
     $ srun -n 1 make
 
