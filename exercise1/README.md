@@ -6,15 +6,16 @@ The folder contains a Makefile to ease the compiling hence it is enough to load 
 
     $ module load architecture/AMD
     $ module load openMPI/4.1.4/gnu/12.2.1
-    $ salloc -n 1 -N1 -p EPYC --time=0:10:0
+    $ salloc -n 1 -N1 -p THIN --time=0:10:0
     $ srun -n 1 make
 
 ## How to run the code
-To get the script and the job going it is sufficient to type
+Example:
 
-    $ sbatch script1.sh
-
-## Setting the arguments
+    $ salloc -N 2 -p THIN --ntasks 2 --cpus-per-task=64 --time=1:50:0
+    $ export OMP_NUM_THREADS=64
+and then *$ srun Conway.x* with the appropriate arguments.<br>
+**Setting the arguments:** <br>
 To know what the arguments are and get a brief guide, type
    
     $ srun Conway.x -h
